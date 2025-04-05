@@ -1,34 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>Transport Time</title>
-        <link rel="stylesheet" href="styles.css" />
-      </head>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Transport Time</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
 <body>
+  <button class="theme-toggle" onclick="toggleTheme()">🌙 Change mode</button>
 
-  <h2>Check Transport Time</h2>
-  <h1>First search by the business ZIP, later select the plant</h1>
+  <h2>PS Transit Time Calculation</h2>
+  <h1>*First search by the business ZIP, later select the plant.*</h1>
 
   <div class="form-group">
-    <label for="inboundZip">Inbound Zip:</label>
-    <input type="text" id="inboundZip" placeholder="Enter inbound zip" oninput="filterTable()">
-
-    <label for="outboundZip">Outbound Zip or State:</label>
-    <select id="outboundZip" onchange="filterTable()">
-      <option value="">Select outbound</option>
-      <option value="UWPJ">UWPJ</option>
-      <option value="UWPS">UWPS</option>
-      <option value="UWPT">UWPT</option>
-      <option value="UWPW">UWPW</option>
-      <option value="UWPX">UWPX</option>
-    </select>
-
-    <label for="deliveryDate">Desired Delivery Date:</label>
-    <input type="date" id="deliveryDate">
-
-    <button onclick="calculateDays()">Check Days</button>
+    <div class="form-field">
+      <label for="inboundZip">Inbound Zip:</label>
+      <input type="text" id="inboundZip" placeholder="Enter inbound zip">
+    </div>
+    <div class="form-field" id="outboundContainer" style="display: none;">
+      <label for="outboundZip">Outbound Zip or State:</label>
+      <select id="outboundZip" onchange="filterTable()">
+        <option value="">Select outbound</option>
+        <option value="UWPJ">UWPJ</option>
+        <option value="UWPS">UWPS</option>
+        <option value="UWPT">UWPT</option>
+        <option value="UWPW">UWPW</option>
+        <option value="UWPX">UWPX</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label for="deliveryDate">Desired Delivery Date:</label>
+      <input type="date" id="deliveryDate">
+    </div>
+    <div class="form-field">
+      <label>&nbsp;</label>
+      <button onclick="calculateDays()">Check Days</button>
+    </div>
+    <div class="form-field">
+      <label>&nbsp;</label>
+      <button onclick="resetSearch()">Reset Search</button>
+    </div>
   </div>
 
   <p id="resultado"></p>
@@ -36,28 +47,15 @@
   <table id="tabela">
     <thead>
       <tr>
-        <th>Outbound</th>
-        <th>Outbound Zip</th>
-        <th>Inbound</th>
-        <th>Inbound Zip</th>
-        <th>AACT</th>
-        <th>CNWY</th>
-        <th>CTII</th>
-        <th>DAFG</th>
-        <th>EXLA</th>
-        <th>OAKH</th>
-        <th>ODFL</th>
-        <th>PITD</th>
-        <th>PYLE</th>
-        <th>RLCA</th>
-        <th>SAIA</th>
-        <th>SEFL</th>
-        <th>TAXA</th>
-        <th>TFIN</th>
+        <th>Outbound</th><th>Outbound Zip</th><th>Inbound</th><th>Inbound Zip</th>
+        <th>AACT</th><th>CNWY</th><th>CTII</th><th>DAFG</th><th>EXLA</th><th>OAKH</th>
+        <th>ODFL</th><th>PITD</th><th>PYLE</th><th>RLCA</th><th>SAIA</th><th>SEFL</th>
+        <th>TAXA</th><th>TFIN</th>
       </tr>
     </thead>
     <tbody id="dadosTabela"></tbody>
   </table>
+
   <script src="script.js"></script>
 </body>
 </html>
