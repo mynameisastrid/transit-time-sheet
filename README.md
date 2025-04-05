@@ -29,8 +29,13 @@ A web tool that helps calculate transit times between business ZIP codes and fac
 ## 📁 File Structure
 
 ├── index.html        # Main UI
+
 ├── styles.css        # Custom styles and dark mode logic
+
 ├── script.js         # Core logic (debounced filtering, calculations, theming)
+
 ├── UWPJ.json         # Sample carrier time data per plant
+
 ├── UWPS.json         # Other plant JSONs...
+
 └── ...
