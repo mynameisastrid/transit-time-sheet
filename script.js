@@ -1,0 +1,119 @@
+let data = [];
+
+function loadDataForOutbound(outbound) {
+  if (!outbound) {
+    data = [];
+    document.getElementById("tabela").style.display = "none";
+    return;
+  }
+
+  fetch(`${outbound}.json`)
+    .then(response => response.json())
+    .then(json => {
+      data = json;
+      filterTable(); // Atualiza a tabela com os dados carregados
+    })
+    .catch(error => {
+      console.error('Erro ao carregar o arquivo JSON:', error);
+      data = [];
+      document.getElementById("tabela").style.display = "none";
+    });
+}
+
+// Adiciona o carregamento dinâmico baseado na seleção da planta
+document.getElementById("outboundZip").addEventListener("change", function () {
+  const outbound = this.value.trim().toUpperCase();
+  loadDataForOutbound(outbound);
+});
+
+function filterTable() {
+  const outboundZipInput = document.getElementById("outboundZip").value.trim().toUpperCase();
+  const inboundZip = document.getElementById("inboundZip").value.trim();
+  const tbody = document.getElementById("dadosTabela");
+  const table = document.getElementById("tabela");
+
+  tbody.innerHTML = "";
+
+  const results = data.filter(entry => 
+    (outboundZipInput === "" || entry.outbound.includes(outboundZipInput)) &&
+    (inboundZip === "" || entry.inboundZip.includes(inboundZip))
+  );
+
+  if (results.length === 0) {
+    table.style.display = "none";
+    return;
+  }
+
+  results.forEach(entry => {
+    let row = "<tr>";
+    row += `<td>${entry.outbound}</td>`;
+    row += `<td>${entry.outboundZip}</td>`;
+    row += `<td>${entry.inbound}</td>`;
+    row += `<td>${entry.inboundZip}</td>`;
+    row += `<td>${entry.AACT || ""}</td>`;
+    row += `<td>${entry.CNWY || ""}</td>`;
+    row += `<td>${entry.CTII || ""}</td>`;
+    row += `<td>${entry.DAFG || ""}</td>`;
+    row += `<td>${entry.EXLA || ""}</td>`;
+    row += `<td>${entry.OAKH || ""}</td>`;
+    row += `<td>${entry.ODFL || ""}</td>`;
+    row += `<td>${entry.PITD || ""}</td>`;
+    row += `<td>${entry.PYLE || ""}</td>`;
+    row += `<td>${entry.RLCA || ""}</td>`;
+    row += `<td>${entry.SAIA || ""}</td>`;
+    row += `<td>${entry.SEFL || ""}</td>`;
+    row += `<td>${entry.TAXA || ""}</td>`;
+    row += `<td>${entry.TFIN || ""}</td>`;
+    row += "</tr>";
+    tbody.innerHTML += row;
+  });
+
+  table.style.display = "table";
+}
+
+function calculateDays() {
+  const outboundZip = document.getElementById("outboundZip").value.trim().toUpperCase();
+  const inboundZip = document.getElementById("inboundZip").value.trim();
+  const deliveryDateInput = document.getElementById("deliveryDate").value;
+  const result = document.getElementById("resultado");
+
+  if (!outboundZip || !inboundZip || !deliveryDateInput) {
+    result.innerHTML = "Please enter both zips and the desired delivery date.";
+    return;
+  }
+
+  const deliveryDate = new Date(deliveryDateInput + "T00:00:00");
+
+  if (deliveryDate.getDay() === 0 || deliveryDate.getDay() === 6) {
+    result.innerHTML = "⚠️ Deliveries cannot be made on weekends. Please select a valid date (Monday to Friday).";
+    return;
+  }
+
+  const match = data.find(d => 
+    (d.outbound === outboundZip) && 
+    d.inboundZip === inboundZip
+  );
+
+  if (match) {
+    const days = [match.AACT, match.CNWY, match.CTII, match.DAFG, match.EXLA, match.OAKH, match.ODFL, match.PITD, match.PYLE, match.RLCA, match.SAIA, match.SEFL, match.TAXA, match.TFIN]
+      .filter(v => typeof v === "number" && v > 0);
+
+    if (days.length > 0) {
+      const minDays = Math.min(...days);
+      const shippingDate = new Date(deliveryDate);
+      shippingDate.setDate(deliveryDate.getDate() - minDays);
+
+      const shippingFormatted = shippingDate.toLocaleDateString('en-US');
+      const deliveryFormatted = deliveryDate.toLocaleDateString('en-US');
+
+      result.innerHTML = `
+        The transport time between <b>${outboundZip}</b> and <b>${inboundZip}</b> is <b>${minDays} day(s)</b>.<br>
+        To ensure delivery on <b>${deliveryFormatted}</b>, you must ship on <b>${shippingFormatted}</b>.
+      `;
+    } else {
+      result.innerHTML = "No information available for this route.";
+    }
+  } else {
+    result.innerHTML = "Route not found.";
+  }
+}
